@@ -209,11 +209,11 @@ int main() {
   //start in lane 1;
   int lane = 1;
   int lane_change_wp = 0;
+  //reference velocity (mph)
+  double ref_vel = 0.0;
 
-  h.onMessage([&map_waypoints_x,&map_waypoints_y,&map_waypoints_s,&map_waypoints_dx,&map_waypoints_dy,&lane,&lane_change_wp](uWS::WebSocket<uWS::SERVER> *ws, char *data, long unsigned int length,
+  h.onMessage([&map_waypoints_x,&map_waypoints_y,&map_waypoints_s,&map_waypoints_dx,&map_waypoints_dy,&lane,&lane_change_wp,&ref_vel](uWS::WebSocket<uWS::SERVER> *ws, char *data, long unsigned int length,
                      uWS::OpCode opCode) {
-    //reference velocity (mph)
-    double ref_vel = 0.0;
     
     // "42" at the start of the message means there's a websocket message event.
     // The 4 signifies a websocket message
@@ -255,12 +255,12 @@ int main() {
             // TODO: define a path made up of (x,y) points that the car will visit sequentially every .02 seconds
             int prev_size = previous_path_x.size();
             
-            if(prev_size > 0){
+            /*if(prev_size > 0){
                 car_s = end_path_s;
-            }
+            }*/
 
             bool too_close = false;
-            bool change_lanes = false;
+            //bool change_lanes = false;
 
             /*for(int i = 0; i < sensor_fusion.size(); i++){
                 //car is in my lane
