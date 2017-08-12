@@ -212,8 +212,8 @@ int main() {
 
   h.onMessage([&map_waypoints_x,&map_waypoints_y,&map_waypoints_s,&map_waypoints_dx,&map_waypoints_dy,&lane,&lane_change_wp](uWS::WebSocket<uWS::SERVER> *ws, char *data, long unsigned int length,
                      uWS::OpCode opCode) {
-    //reference velocity
-    double ref_vel = 49.5;
+    //reference velocity (mph)
+    double ref_vel = 0.0;
     
     // "42" at the start of the message means there's a websocket message event.
     // The 4 signifies a websocket message
@@ -260,8 +260,9 @@ int main() {
             }
 
             bool too_close = false;
+            bool change_lanes = false;
 
-            for(int i = 0; i < sensor_fusion.size(); i++){
+            /*for(int i = 0; i < sensor_fusion.size(); i++){
                 //car is in my lane
                 float d = sensor_fusion[i][6];
                 if(d < (2 + 4 * lane + 2) && d > (2 + 4 * lane - 2)){
@@ -273,16 +274,68 @@ int main() {
                     check_car_s += ((double)prev_size * 0.02 * check_speed);
 
                     if((check_car_s > car_s) && ((check_car_s - car_s) < 30)){
-                        //Set lower speed like 29.5 mph
-                        ref_vel = 29.5; 
+                        too_close = true;
+                        change_lanes = true;
                     }
                 }
+            }*/
+ 
+            if(too_close){
+                //ref_vel -= 0.224;
+            }else if(ref_vel < 49.5){
+                ref_vel += 0.224;
             }
+/*
+            if (too_close && change_lanes){
+               bool changed_lanes = false;
+               if(lane != 0 && !changed_lanes){
+                  bool safe = false;
+                  for(int i = 0; i < sensor_fusion.size(); i++){
+                     //car is in left lane
+                     float d = sensor_fusion[i][6];
+                     if(d < (2 + 4 * (lane - 1) + 2) && d > (2 + 4 * (lane - 1) - 2)){
+                         double vx = sensor_fusion[i][3];
+                         double vy = sensor_fusion[i][4];
+                         double check_speed = sqrt(vx*vx+vy*vy);
+                         double check_car_s = sensor_fusion[i][5];
 
+                         check_car_s += ((double)prev_size * 0.02 * check_speed);
+                         double dist_s = abs(check_car_s - car_s);
+                         if(dist_s > 30){
+                            safe = true;
+                         }
+                     }                     
+                  }
+                  if(safe){
+                      changed_lanes = true;
+                      lane -= 1;
+                  } 
+               }
+               if(lane != 2 && !changed_lanes){
+                  bool safe = false;
+                  for(int i = 0; i < sensor_fusion.size(); i++){
+                     //car is in left lane
+                     float d = sensor_fusion[i][6];
+                     if(d < (2 + 4 * (lane + 1) + 2) && d > (2 + 4 * (lane + 1) - 2)){
+                         double vx = sensor_fusion[i][3];
+                         double vy = sensor_fusion[i][4];
+                         double check_speed = sqrt(vx*vx+vy*vy);
+                         double check_car_s = sensor_fusion[i][5];
 
-
-
-
+                         check_car_s += ((double)prev_size * 0.02 * check_speed);
+                         double dist_s = abs(check_car_s - car_s);
+                         if(dist_s > 30){
+                            safe = true;
+                         }
+                     }
+                  }
+                  if(safe){
+                      changed_lanes = true;
+                      lane += 1;
+                  }
+               } 
+            }
+*/
             //Create a list of widely spaced (x,y) waypoints, evenly spaced at 30m and later it will be interpolated with a spline
             vector<double> ptsx;
             vector<double> ptsy;
