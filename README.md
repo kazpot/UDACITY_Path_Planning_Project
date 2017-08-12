@@ -19,8 +19,11 @@ If s value difference of my car and other car is 30, it starts preparing to chan
 When s value difference of those is 25, it decreases the speed by ref_vel -= 0.224 * 4, for s value difference is 10, decreased by ref_vel -= 0.224 * 6. 
 Actual lane change happens when my car approaches other car in front too close and s value difference of my car and other cars in the other lanes more than 20. 
 
+
+### Movie on Youtube
+[https://www.youtube.com/watch?v=A57vYjLSMZo&feature=youtu.be](https://www.youtube.com/watch?v=A57vYjLSMZo&feature=youtu.be)
  
-### Simulator.
+### Simulator
 You can download the Term3 Simulator which contains the Path Planning Project from the [releases tab (https://github.com/udacity/self-driving-car-sim/releases).
 
 ### Goals
