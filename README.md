@@ -1,6 +1,24 @@
 ## CarND-Path-Planning-Project
 Self-Driving Car Engineer Nanodegree Program
 
+### Reflection
+
+The goal in this project is to build a path planner that is smooth, safe trajectories for the car in the simulator.
+On the highway track, other cars are running at different speeds. The sensor fusion data provides the location of all the cars. 
+
+I transformed Frenet coordinates (s,d) to (x,y) coordinates and interpolated the posision of those points using spine library. 
+Because the highway map waypoints are widely spaced so without using spline library, the future path cannot be created smoothly. 
+
+The three anchors 30, 60, and 90 meteres are selected to create smooth projected path so that it does not produce max acceleration and jerk. 
+Number of pionts up to 30 meters ahead is calculated using N = (target_dist/(0.02 * ref_vel/2.24)) where N is number of points, target_dist is 30 meters, 
+0.02 m/s is speed between way points, and ref_vel is reference velocity of my car. Reference velocity is increased by 0.224 m/s per way points 
+if it does not exceed 49.5 mph. As a result the car runs on smooth path and does not crash the cars ahead. 
+
+Using sensor fusion data, I have implemented lane change strategy. At first going through each other car data, I checked if my car is too close to the other car in front.
+If s value difference of my car and other car is 30, it starts preparing to change lane and decreases the speed by ref_vel -= 0.224 * 2. 
+When s value difference of those is 25, it decreases the speed by ref_vel -= 0.224 * 4, for s value difference is 10, decreased by ref_vel -= 0.224 * 6. 
+Actual lane change happens when my car approaches other car in front too close and s value difference of my car and other cars in the other lanes more than 20. 
+
  
 ### Simulator.
 You can download the Term3 Simulator which contains the Path Planning Project from the [releases tab (https://github.com/udacity/self-driving-car-sim/releases).
