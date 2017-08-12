@@ -255,14 +255,14 @@ int main() {
             // TODO: define a path made up of (x,y) points that the car will visit sequentially every .02 seconds
             int prev_size = previous_path_x.size();
             
-            /*if(prev_size > 0){
+            if(prev_size > 0){
                 car_s = end_path_s;
-            }*/
+            }
 
             bool too_close = false;
-            //bool change_lanes = false;
+            bool change_lanes = false;
 
-            /*for(int i = 0; i < sensor_fusion.size(); i++){
+            for(int i = 0; i < sensor_fusion.size(); i++){
                 //car is in my lane
                 float d = sensor_fusion[i][6];
                 if(d < (2 + 4 * lane + 2) && d > (2 + 4 * lane - 2)){
@@ -276,20 +276,22 @@ int main() {
                     if((check_car_s > car_s) && ((check_car_s - car_s) < 30)){
                         too_close = true;
                         change_lanes = true;
+                        ref_vel -= 0.224 * 2;
+                    }
+                    if((check_car_s > car_s) && ((check_car_s - car_s) < 25)){
+                         ref_vel -= 0.224 * 4;
+                    }
+                    if((check_car_s > car_s) && ((check_car_s - car_s) < 10)){
+                        ref_vel -= 0.224 * 6;
                     }
                 }
-            }*/
- 
-            if(too_close){
-                //ref_vel -= 0.224;
-            }else if(ref_vel < 49.5){
-                ref_vel += 0.224;
             }
-/*
+ 
+
             if (too_close && change_lanes){
                bool changed_lanes = false;
                if(lane != 0 && !changed_lanes){
-                  bool safe = false;
+                  bool safe = true;
                   for(int i = 0; i < sensor_fusion.size(); i++){
                      //car is in left lane
                      float d = sensor_fusion[i][6];
@@ -301,8 +303,8 @@ int main() {
 
                          check_car_s += ((double)prev_size * 0.02 * check_speed);
                          double dist_s = abs(check_car_s - car_s);
-                         if(dist_s > 30){
-                            safe = true;
+                         if(dist_s < 20){
+                            safe = false;
                          }
                      }                     
                   }
@@ -312,7 +314,7 @@ int main() {
                   } 
                }
                if(lane != 2 && !changed_lanes){
-                  bool safe = false;
+                  bool safe = true;
                   for(int i = 0; i < sensor_fusion.size(); i++){
                      //car is in left lane
                      float d = sensor_fusion[i][6];
@@ -324,8 +326,8 @@ int main() {
 
                          check_car_s += ((double)prev_size * 0.02 * check_speed);
                          double dist_s = abs(check_car_s - car_s);
-                         if(dist_s > 30){
-                            safe = true;
+                         if(dist_s < 20){
+                            safe = false;
                          }
                      }
                   }
@@ -335,7 +337,7 @@ int main() {
                   }
                } 
             }
-*/
+
             //Create a list of widely spaced (x,y) waypoints, evenly spaced at 30m and later it will be interpolated with a spline
             vector<double> ptsx;
             vector<double> ptsy;
@@ -413,6 +415,11 @@ int main() {
             double x_add_on = 0;
 
             for(int i = 1; i <= 50 - previous_path_x.size(); i++){
+                if(ref_vel < 49.5){
+                    ref_vel += 0.224;
+                }else{
+                    ref_vel -= 0.224;
+                }
                 //ref_vel/2.24 is conversion miles/hour -> meter/second
                 double N = (target_dist/(0.02 * ref_vel/2.24));
                 double x_point = x_add_on + target_x/N;
